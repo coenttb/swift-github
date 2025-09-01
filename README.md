@@ -4,13 +4,13 @@
 [![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE.md)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/coenttb/swift-github/releases)
 
-A complete, production-ready GitHub API client for Swift server applications.
+A [not yet] complete, production-ready GitHub API client for Swift server applications.
 
 ## Overview
 
 `swift-github` provides a high-level, dependency-injected interface to GitHub's REST API with:
 
-- 🎯 **Complete API Coverage**: Traffic, repositories, stargazers, and more
+- 🎯 **[not yet] Complete API Coverage**: Traffic, repositories, stargazers, and more
 - 🔌 **Dependency Injection**: First-class support via swift-dependencies
 - 🧪 **Testable**: Mock implementations for testing
 - 📊 **Analytics Ready**: Built-in traffic and engagement metrics
