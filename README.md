@@ -30,25 +30,6 @@ dependencies: [
 
 ## Quick Start
 
-### Basic Setup
-
-```swift
-import GitHub
-import Dependencies
-
-// Configure in your app
-extension DependencyValues {
-    var githubClient: GitHub.Client {
-        get { self[GitHub.Client.self] }
-        set { self[GitHub.Client.self] = newValue }
-    }
-}
-
-// Use the live implementation
-@Dependency(\.githubClient.live(accessToken: "ghp_your_token"))
-var githubClient
-```
-
 ### Fetching Repository Data
 
 ```swift
@@ -56,7 +37,7 @@ import GitHub
 import Dependencies
 
 struct MyService {
-    @Dependency(\.githubClient) var github
+    @Dependency(\.github.client) var github
     
     func fetchRepositoryStats() async throws {
         // Get traffic data
@@ -90,7 +71,7 @@ import Dependencies
 @Test
 func testGitHubIntegration() async throws {
     await withDependencies {
-        $0.githubClient.traffic.views = { _, _ in
+        $0.github.client.traffic.views = { _, _ in
             // Return mock traffic data
             .init(count: 100, uniques: 50, views: [])
         }
