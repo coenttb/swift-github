@@ -4,13 +4,13 @@
 [![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE.md)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/coenttb/swift-github/releases)
 
-A complete, production-ready GitHub API client for Swift server applications.
+A [not yet] complete, production-ready GitHub API client for Swift server applications.
 
 ## Overview
 
 `swift-github` provides a high-level, dependency-injected interface to GitHub's REST API with:
 
-- 🎯 **Complete API Coverage**: Traffic, repositories, stargazers, and more
+- 🎯 **[not yet] Complete API Coverage**: Traffic, repositories, stargazers, and more
 - 🔌 **Dependency Injection**: First-class support via swift-dependencies
 - 🧪 **Testable**: Mock implementations for testing
 - 📊 **Analytics Ready**: Built-in traffic and engagement metrics
@@ -30,25 +30,6 @@ dependencies: [
 
 ## Quick Start
 
-### Basic Setup
-
-```swift
-import GitHub
-import Dependencies
-
-// Configure in your app
-extension DependencyValues {
-    var githubClient: GitHub.Client {
-        get { self[GitHub.Client.self] }
-        set { self[GitHub.Client.self] = newValue }
-    }
-}
-
-// Use the live implementation
-@Dependency(\.githubClient.live(accessToken: "ghp_your_token"))
-var githubClient
-```
-
 ### Fetching Repository Data
 
 ```swift
@@ -56,7 +37,7 @@ import GitHub
 import Dependencies
 
 struct MyService {
-    @Dependency(\.githubClient) var github
+    @Dependency(\.github.client) var github
     
     func fetchRepositoryStats() async throws {
         // Get traffic data
@@ -90,7 +71,7 @@ import Dependencies
 @Test
 func testGitHubIntegration() async throws {
     await withDependencies {
-        $0.githubClient.traffic.views = { _, _ in
+        $0.github.client.traffic.views = { _, _ in
             // Return mock traffic data
             .init(count: 100, uniques: 50, views: [])
         }
