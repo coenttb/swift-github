@@ -7,9 +7,10 @@
 
 import Foundation
 import Testing
+
 @testable import GitHub
 
 @Test
-func test() async throws  {
-    
+func test() async throws {
+
 }
