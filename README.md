@@ -177,9 +177,13 @@ This package powers GitHub integrations at:
 
 ## Related Packages
 
-- [swift-github-types](https://github.com/coenttb/swift-github-types): Core types (Apache 2.0)
-- [swift-github-live](https://github.com/coenttb/swift-github-live): Live implementations
-- [coenttb-com-server](https://github.com/coenttb/coenttb-com-server): Production example
+### Dependencies
+
+- [swift-github-live](https://github.com/coenttb/swift-github-live): A Swift package with live implementations for the GitHub API.
+
+### Third-Party Dependencies
+
+- [pointfreeco/swift-dependencies](https://github.com/pointfreeco/swift-dependencies): A dependency management library for controlling dependencies in Swift.
 
 ## Requirements
 
