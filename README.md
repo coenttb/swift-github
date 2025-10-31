@@ -1,22 +1,21 @@
 # swift-github
 
-[![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
-[![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE.md)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/coenttb/swift-github/releases)
+[![CI](https://github.com/coenttb/swift-github/workflows/CI/badge.svg)](https://github.com/coenttb/swift-github/actions/workflows/ci.yml)
+![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
-A [not yet] complete, production-ready GitHub API client for Swift server applications.
+Type-safe GitHub API client for Swift with dependency injection and modular architecture.
 
 ## Overview
 
-`swift-github` provides a high-level, dependency-injected interface to GitHub's REST API with:
+`swift-github` provides a high-level interface to GitHub's REST API built on swift-dependencies for testability and maintainability.
 
-- 🎯 **[not yet] Complete API Coverage**: Traffic, repositories, stargazers, and more
-- 🔌 **Dependency Injection**: First-class support via swift-dependencies
-- 🧪 **Testable**: Mock implementations for testing
-- 📊 **Analytics Ready**: Built-in traffic and engagement metrics
-- 🚀 **Production Ready**: Used in production at coenttb.com
-- ⚡ **High Performance**: Async/await with efficient connection pooling
-- 🔐 **Secure**: Multiple authentication methods supported
+## Features
+
+- Type-safe API clients for traffic analytics, repositories, and stargazers
+- Dependency injection via swift-dependencies for testable code
+- Modular design with separate packages for different API domains
+- Async/await support for modern Swift concurrency
+- OAuth authentication support
 
 ## Installation
 
@@ -30,38 +29,38 @@ dependencies: [
 
 ## Quick Start
 
-### Fetching Repository Data
+### Traffic Analytics
 
 ```swift
 import GitHub
 import Dependencies
 
-struct MyService {
-    @Dependency(\.github.client) var github
-    
-    func fetchRepositoryStats() async throws {
-        // Get traffic data
-        let traffic = try await github.traffic.views(
-            owner: "coenttb",
-            repo: "swift-github"
-        )
-        
-        // Get repository info
-        let repo = try await github.repositories.get(
-            owner: "coenttb",
-            repo: "swift-github"
-        )
-        
-        // Get stargazers
-        let stars = try await github.stargazers.list(
-            owner: "coenttb",
-            repo: "swift-github"
-        )
-    }
-}
+@Dependency(\.github) var github
+
+let views = try await github.client.traffic.views(
+    owner: "coenttb",
+    repo: "swift-github",
+    per: .day
+)
+
+let clones = try await github.client.traffic.clones(
+    owner: "coenttb",
+    repo: "swift-github",
+    per: nil
+)
+
+let paths = try await github.client.traffic.paths(
+    owner: "coenttb",
+    repo: "swift-github"
+)
+
+let referrers = try await github.client.traffic.referrers(
+    owner: "coenttb",
+    repo: "swift-github"
+)
 ```
 
-### Testing
+### Testing with Mocks
 
 ```swift
 import Testing
@@ -69,133 +68,44 @@ import GitHub
 import Dependencies
 
 @Test
-func testGitHubIntegration() async throws {
+func testTrafficAnalytics() async throws {
     await withDependencies {
-        $0.github.client.traffic.views = { _, _ in
-            // Return mock traffic data
+        $0.github.client.traffic.views = { _, _, _ in
             .init(count: 100, uniques: 50, views: [])
         }
     } operation: {
-        let service = MyService()
-        try await service.fetchRepositoryStats()
-        // Assert expected behavior
+        @Dependency(\.github) var github
+        let result = try await github.client.traffic.views("owner", "repo", .day)
+        #expect(result.count == 100)
+        #expect(result.uniques == 50)
     }
 }
 ```
 
-## Features
-
-### Traffic Analytics
-
-Monitor repository engagement:
-
-```swift
-// Daily views
-let dailyViews = try await github.traffic.views(
-    owner: owner,
-    repo: repo,
-    per: .day
-)
-
-// Clone statistics
-let clones = try await github.traffic.clones(
-    owner: owner,
-    repo: repo
-)
-
-// Popular content
-let paths = try await github.traffic.popularPaths(
-    owner: owner,
-    repo: repo
-)
-```
-
-### Repository Management
-
-Access repository metadata and operations:
-
-```swift
-// Repository details
-let repo = try await github.repositories.get(
-    owner: owner,
-    repo: name
-)
-
-// List repositories
-let repos = try await github.repositories.list(
-    user: username,
-    type: .owner,
-    sort: .updated
-)
-```
-
-### Stargazers
-
-Track repository popularity:
-
-```swift
-// Get stargazers with timestamps
-let stargazers = try await github.stargazers.list(
-    owner: owner,
-    repo: repo,
-    page: 1,
-    perPage: 100
-)
-
-// Total star count
-let count = try await github.stargazers.count(
-    owner: owner,
-    repo: repo
-)
-```
-
 ## Architecture
 
-The package provides a clean separation of concerns:
+The package is organized into focused modules:
 
-- **GitHub**: High-level client with dependency injection
-- **GitHubTraffic**: Traffic analytics module
-- **GitHubRepositories**: Repository operations module
-- **GitHubShared**: Shared utilities and types
+- **GitHub**: Main module combining all GitHub API functionality
+- **GitHub Traffic**: Traffic analytics and metrics
+- **GitHub Repositories**: Repository operations and metadata
+- **GitHub Shared**: Common types and utilities shared across modules
 
-### Dependency Structure
-
-```
-swift-github
-├── swift-github-live (implementations)
-│   └── swift-github-types (type definitions)
-└── swift-dependencies (dependency injection)
-```
-
-## Production Use
-
-This package powers GitHub integrations at:
-
-- [coenttb.com](https://coenttb.com) - Repository statistics dashboard
-- Traffic analytics and monitoring
-- Automated reporting systems
+Each module provides a dependency-injectable client for testability.
 
 ## Related Packages
 
-### Dependencies
-
 - [swift-github-live](https://github.com/coenttb/swift-github-live): A Swift package with live implementations for the GitHub API.
-
-### Third-Party Dependencies
-
+- [swift-github-types](https://github.com/coenttb/swift-github-types): Type definitions for GitHub API responses and requests.
 - [pointfreeco/swift-dependencies](https://github.com/pointfreeco/swift-dependencies): A dependency management library for controlling dependencies in Swift.
 
 ## Requirements
 
 - Swift 6.0+
-- macOS 14+ / iOS 17+ / Linux
+- macOS 14+ / iOS 17+
 
 ## License
 
 This package is licensed under the AGPL 3.0 License. See [LICENSE.md](LICENSE.md) for details.
 
 For commercial licensing options, please contact the maintainer.
-
-## Support
-
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/coenttb/swift-github).
